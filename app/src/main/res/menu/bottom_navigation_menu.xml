@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item_1"
+        android:enabled="true"
+        android:icon="@drawable/home_selected"
+        android:title="Home" />
+    <item
+        android:id="@+id/item_2"
+        android:enabled="true"
+        android:icon="@drawable/library_music_selected"
+        android:title="Media library" />
+
+    <item
+        android:id="@+id/item_3"
+        android:enabled="true"
+        android:icon="@drawable/shopping_cart_selected"
+        android:title="Premium" />
+
+</menu>
