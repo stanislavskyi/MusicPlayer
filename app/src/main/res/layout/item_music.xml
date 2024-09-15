@@ -10,12 +10,13 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:scaleType="centerCrop"
-        android:src="@drawable_"
+        android:src="@drawable/music_note_48px"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
+        android:id="@+id/musicTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
