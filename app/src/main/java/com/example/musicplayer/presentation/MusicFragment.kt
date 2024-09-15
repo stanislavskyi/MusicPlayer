@@ -1,71 +1,80 @@
 package com.example.musicplayer.presentation
 
-import android.app.Activity
-import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.R
+import com.example.musicplayer.domain.Audio
 import com.example.musicplayer.presentation.adapters.MusicAdapter
 
 class MusicFragment : Fragment() {
 
     private lateinit var musicRecyclerView: RecyclerView
     private lateinit var musicAdapter: MusicAdapter
-    private val musicList = mutableListOf<String>()
+
+    private val musicList = mutableListOf<Audio>()
+
+    private val openFilePicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let {
+            displayAudioInfo(it)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_music, container, false)
+        return inflater.inflate(R.layout.fragment_music, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         musicRecyclerView = view.findViewById(R.id.musicRecyclerView)
         musicAdapter = MusicAdapter()
-        musicRecyclerView.layoutManager = LinearLayoutManager(
-            context
+        musicRecyclerView.layoutManager = GridLayoutManager(
+            requireContext(),
+            3
         )
         musicRecyclerView.adapter = musicAdapter
 
         val loadMusicButton: Button = view.findViewById(R.id.loadMusicButton)
         loadMusicButton.setOnClickListener {
-            openFilePicker()
+            openFilePicker.launch(arrayOf("audio/*"))
         }
-
-        return view
     }
 
-    private fun openFilePicker() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "audio/*"
-        }
-        startActivityForResult(intent, 1)
-    }
+    private fun displayAudioInfo(uri: Uri) {
+        val retriever = MediaMetadataRetriever()
+        retriever.setDataSource(requireContext(), uri)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            data?.data?.let { uri ->
-                val cursor = requireContext().contentResolver.query(uri, arrayOf(MediaStore.Audio.Media.DISPLAY_NAME), null, null, null)
-                cursor?.use {
-                    if (it.moveToFirst()) {
-                        val title = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME))
-                        musicList.add(title)
-                        musicAdapter.submitList(musicList.toList())
-                    }
-                }
-            } ?: run {
-                Log.e("MusicFragment", "Data URI is null")
-            }
+        val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
+        val albumArt = retriever.embeddedPicture
+
+        var bitmap: Bitmap?
+
+        Log.d("MAIN_TAG", "$albumArt")
+        if (albumArt != null){
+            bitmap = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.size)
+        } else{
+            bitmap = null
         }
+
+        musicList.add(Audio(title, bitmap))
+        musicAdapter.submitList(musicList.toList())
+
+        retriever.release()
+
     }
 }
-
