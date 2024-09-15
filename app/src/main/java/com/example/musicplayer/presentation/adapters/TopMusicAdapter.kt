@@ -39,9 +39,9 @@ class TopMusicAdapter : PagingDataAdapter<Music, TopMusicAdapter.TopViewHolder>(
     }
 
     class TopViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvArtistName: TextView = itemView.findViewById(R.id.tv_artist_name)
-        val tvSongTitle: TextView = itemView.findViewById(R.id.tv_song_title)
-        val ivAlbumCover: ImageView = itemView.findViewById(R.id.iv_album_cover)
+        val tvArtistName: TextView = itemView.findViewById(R.id.duration)
+        val tvSongTitle: TextView = itemView.findViewById(R.id.title)
+        val ivAlbumCover: ImageView = itemView.findViewById(R.id.preview)
     }
 
     class TopMusicDiffCallback : DiffUtil.ItemCallback<Music>() {
