@@ -1,12 +1,7 @@
 package com.example.musicplayer.presentation
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment
 import com.example.musicplayer.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -22,7 +17,6 @@ class MainActivity : AppCompatActivity() {
 //            insets
 //        }
 
-        //val navController = findNavController(R.id.main_container)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
         val navController = navHostFragment.navController
 
